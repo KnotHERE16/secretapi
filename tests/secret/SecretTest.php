@@ -1,26 +1,19 @@
 <?php
 
 use Laravel\Lumen\Testing\DatabaseMigrations;
-use Laravel\Lumen\Testing\DatabaseTransactions;
+use App\Models\Secret;
 
 
 class SecretTest extends TestCase
 {
-    /**
-     * A basic test example.
-     *
-     * @return void
-     */
-
-
+    use DatabaseMigrations;
 
     public function test_create_object()
     {
         $this->json('POST', '/object', [
-            "json" => ["key5" => ["ba" => "jsonstring"]]
+            "json" => ['key1' => ['akey' => '1ab']]
         ]);
         $output['message'] = 'New record created';
-        $this->seeInDatabase('secrets',['key' => 'key5','ba' => 'jsonstring','created_at' => date('u')]);
         $this->assertJson(json_encode($output));
         $this->assertResponseStatus(201);
     }
@@ -46,27 +39,44 @@ class SecretTest extends TestCase
         $this->assertResponseStatus(422);
     }
 
-    
     public function test_get_object()
     {
-        $this->json('GET','/object/key1');
+        Secret::factory()->keyvalue('key12',['first'=>'hi'])->create();
+        Secret::factory()->keyvalue('key12',['second'=>'hi'])->create();
+        $this->json('GET','/object/key12');
         $this->seeJson([
-            'key1' => 1245
+            'key12' => ['second' => 'hi']
         ]);
         $this->assertResponseStatus(200);
     }
 
     public function test_get_object_with_time()
     {
-        $this->json('GET','/object/key1');
+        Secret::factory()->keytime(['me'=>'third'],'111232311')->create();
+        Secret::factory()->keytime(['me'=>'first'],'222222222')->create();
+        Secret::factory()->keytime(['me'=>'last'],'332343243')->create();
+
+        $this->json('GET','/object/mykey?timestamp=222222222');
         $this->seeJson([
-            'key1' => 1245
+            'mykey' => ['me'=>'first']
         ]);
         $this->assertResponseStatus(200);
     }
 
+    public function test_get_object_with_invalid_time(){
+
+        $this->json('GET','/object/mykey?timestamp=0');
+        $this->seeJson([
+            'message' => 'timestamp need to be in Unix format'
+        ]);
+        $this->assertResponseStatus(422);
+
+    }
+
     public function test_get_all()
     {
+        Secret::factory()->count(3)->keyone()->create();
+        Secret::factory()->count(3)->create();
         $this->get('/object/get_all_records');
         $this->seeJsonStructure(
             [

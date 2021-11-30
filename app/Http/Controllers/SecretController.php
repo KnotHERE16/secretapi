@@ -15,10 +15,13 @@ class SecretController extends Controller
     {
         $output = [];
         $result = Secret::all(['key', 'value','created_at']);
+
+        if($result->isEmpty()){
+            return $this->response_with_message('Empty Record');
+        }
         foreach ($result as $k => $v) {
                 $output[$v['key']][] = ['value'=>json_decode($v['value']),'timestamp' => $v['created_at']];
         }
-
          return response()->json($output);
     }
 
@@ -55,9 +58,15 @@ class SecretController extends Controller
      */
     public function getObject($mykey, Request $request)
     {
-        $this->validate($request,[
+
+        $validator = Validator::make($request->all(),[
             'timestamp' => 'integer|gt:0'
         ]);
+
+        if ($validator->fails()) {
+            $message = 'timestamp need to be in Unix format';
+           return $this->response_with_message($message,422);
+        }
 
         $timestamp = $request->timestamp;
 
