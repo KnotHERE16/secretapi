@@ -17,10 +17,6 @@ $router->get('/', function () use ($router) {
     return "<h1 style='text-align:center'>Hello !!!<br>From<br>Aung Kyaw Myint<br>(Kelvin)<br>".$router->app->version()."</h1>";
 });
 
-$router->get('/env', function () use ($router) {
-    return app('env');
-});
-
 $router->post('object', ['uses' => 'SecretController@createObject']);
 
 $router->get('object/get_all_records', ['uses' => 'SecretController@getAll']);
