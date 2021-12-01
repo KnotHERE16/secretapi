@@ -34,9 +34,6 @@ jobs:
       - name: Install composer dependencies
         run: |
           composer install --no-scripts
-      - name: Copy .env
-        run: |
-          php -r "file_exists('.env') || copy('.env.github', '.env');"
      
       - name: Prepare Laravel Application
         run: |
