@@ -33,7 +33,7 @@ jobs:
         php artisan migrate
     - name: Execute test
       run: vendor/bin/phpunit
-    - name: "Configure AWS Credentials" Action For GitHub Actions
+    - name: "Configure AWS Credentials"
       uses: aws-actions/configure-aws-credentials@v1
       with:
         aws-region: ap-southeast-1
