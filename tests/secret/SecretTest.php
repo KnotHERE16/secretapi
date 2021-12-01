@@ -41,11 +41,12 @@ class SecretTest extends TestCase
 
     public function test_get_object()
     {
-        Secret::factory()->keyvalue('key12',['first'=>'hi'])->create();
-        Secret::factory()->keyvalue('key12',['second'=>'hi'])->create();
-        $this->json('GET','/object/key12');
+        Secret::factory()->keytime(['me'=>'third'],'111232311')->create();
+        Secret::factory()->keytime(['me'=>'first'],'222222222')->create();
+        Secret::factory()->keytime(['me'=>'last'],'332343243')->create();
+        $this->json('GET','/object/mykey');
         $this->seeJson([
-            'key12' => ['second' => 'hi']
+            'mykey' => ['me' => 'last']
         ]);
         $this->assertResponseStatus(200);
     }
