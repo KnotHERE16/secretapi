@@ -42,6 +42,6 @@ jobs:
         role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
         role-duration-seconds: 1200
     - name: trigger CodePipeline
-      run: aws codepipeline start-pipeline-execution --name MY_PIPELINE_NAME
+      run: aws codepipeline start-pipeline-execution --name secretapi
     
 
