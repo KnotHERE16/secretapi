@@ -18,24 +18,21 @@ class SecretTest extends TestCase
         $this->assertResponseStatus(201);
     }
 
-    public function test_create_bad_json()
+    public function test_create_empty_json()
     {
-        $this->json('POST', '/object', [
-            "json" => 'abcde'
-        ]);
-        $output['message'] = 'Invalid json object / Only one value pair allow';
+        $this->json('POST', '/object', []);
+        $output['message'] = 'Invalid json object';
         $this->seeJson($output);
         $this->assertResponseStatus(422);
     }
 
-    public function test_create_empty_json()
+    public function test_create_extra_pairs_json()
     {
-        $this->json('POST', '/object', [
-        ]);
-        $output['message'] = 'Invalid json object / Only one value pair allow';
-        $this->seeJson([
-            'message' => 'The json field is required.'
-         ]);
+        $input['key1'] = 123;
+        $input['key2'] = 'abc';
+        $this->json('POST', '/object', $input);
+        $output['message'] = 'Only one key value pair allow';
+        $this->seeJson($output);
         $this->assertResponseStatus(422);
     }
 

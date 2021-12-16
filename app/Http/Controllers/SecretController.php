@@ -30,18 +30,15 @@ class SecretController extends Controller
      */
     public function createObject(Request $request)
     {
-        $validator = Validator::make($request->all(),[
-            'json' => 'required'
-        ]);
 
-        if ($validator->fails()) {
-            $message = $validator->errors()->first();
-           return $this->response_with_message($message,422);
+        $json = json_decode($request->getContent(),true);
+       
+        if (!is_array($json) || !$json) {
+            return $this->response_with_message('Invalid json object',422);
         }
 
-        $json = $request->json;
-        if (!is_array($json) || !$json || count($json) !== 1) {
-            return $this->response_with_message('Invalid json object / Only one value pair allow',422);
+        if (count($json) !== 1) {
+            return $this->response_with_message('Only one key value pair allow',422);
         }
 
         foreach ($json as $k => $v) {
